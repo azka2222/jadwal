@@ -1,0 +1,1027 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b2a5b">
+<title>X-A Avengers · Jadwal & Chat</title>
+<link rel="icon" href="logo.jpg">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="X-A Avengers">
+<style>
+:root{
+  --glass:rgba(255,255,255,.11); --glass2:rgba(255,255,255,.18); --line:rgba(255,255,255,.22);
+  --text:#f4f8ff; --muted:#b9c7e6; --acc:#38bdf8; --acc2:#6366f1;
+  --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;color:var(--text);background:#0b2a5b;overflow-x:hidden;
+  font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.bg{position:fixed;inset:-50px;z-index:-2;background:url(bg.jpg) center/cover no-repeat;
+  filter:blur(22px) saturate(1.2) brightness(.6);transform:scale(1.08)}
+body::before{content:"";position:fixed;inset:0;z-index:-1;
+  background:linear-gradient(180deg,rgba(5,18,45,.45),rgba(5,18,45,.78))}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);
+  -webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3);
+  box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.muted{color:var(--muted)}
+.shell{max-width:860px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 14px 120px}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:14px}
+.top img{width:44px;height:44px;border-radius:12px;object-fit:cover;border:1px solid var(--line)}
+.top .ttl{flex:1;min-width:0}
+.top h1{margin:0;font-size:1.08rem;line-height:1.2;letter-spacing:.02em;white-space:nowrap}
+.top small{display:block;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;
+  background:var(--glass2);border:1px solid var(--line);font-size:.8rem;white-space:nowrap}
+.iconbtn{background:var(--glass2);border:1px solid var(--line);border-radius:12px;width:38px;height:38px;
+  display:grid;place-items:center;font-size:1rem}
+.iconbtn:hover{background:rgba(255,255,255,.28)}
+.banner{margin:0 0 14px;padding:10px 14px;border-radius:14px;font-size:.85rem;
+  background:rgba(251,191,36,.16);border:1px solid rgba(251,191,36,.45);color:#fde8a6}
+
+/* nav */
+.nav{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 14px);transform:translateX(-50%);
+  display:flex;gap:4px;padding:6px;z-index:20}
+.nav button{position:relative;border:0;background:transparent;padding:10px 18px;border-radius:14px;
+  color:var(--muted);font-weight:600;display:flex;align-items:center;gap:7px}
+.nav button.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;box-shadow:0 6px 18px rgba(56,189,248,.35)}
+.dot{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--bad);color:#fff;
+  font-size:.7rem;display:inline-grid;place-items:center;font-weight:700}
+
+/* schedule */
+.daytabs{display:flex;gap:8px;overflow-x:auto;padding:9px 4px 10px;margin-bottom:2px;scrollbar-width:none}
+.daytabs::-webkit-scrollbar{display:none}
+.daytab{flex:1 0 auto;min-width:64px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);
+  background:var(--glass);color:var(--text);font-weight:600;position:relative}
+.daytab.on{background:linear-gradient(135deg,var(--acc),var(--acc2));border-color:transparent}
+.daytab.today::after{content:"";position:absolute;top:7px;left:8px;width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.dayhead{display:flex;align-items:baseline;justify-content:space-between;margin:8px 2px 12px}
+.dayhead h2{margin:0;font-size:1.25rem}
+.fixed{display:flex;align-items:center;gap:10px;padding:8px 14px;margin:8px 0;border-radius:12px;
+  background:rgba(255,255,255,.07);border:1px dashed var(--line);color:var(--muted);font-size:.88rem}
+.fixed .t{flex:1}
+.fixed.live{border-style:solid;border-color:var(--ok);color:#d6ffee}
+.lesson{margin:10px 0;padding:14px 16px 14px 20px;position:relative;overflow:hidden}
+.lesson::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c)}
+.lesson.live{box-shadow:0 0 0 2px var(--ok),0 8px 30px rgba(0,0,0,.25)}
+.lhead{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.time{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.78rem;font-weight:700;
+  background:rgba(255,255,255,.16);border:1px solid var(--line)}
+.jam{font-size:.78rem;color:var(--muted);margin-left:6px}
+.subj{font-size:1.12rem;font-weight:700;margin:6px 0 0;line-height:1.3}
+.teach{color:var(--muted);font-size:.9rem}
+.badge{padding:2px 9px;border-radius:999px;font-size:.72rem;font-weight:700;background:var(--ok);color:#052e20;white-space:nowrap}
+.notes{list-style:none;margin:12px 0 0;padding:0}
+.note{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-top:1px dashed var(--line)}
+.note input[type=checkbox]{width:19px;height:19px;margin-top:2px;accent-color:var(--acc);flex:none}
+.note .body{flex:1;min-width:0}
+.note .txt{word-break:break-word}
+.note.done .txt{text-decoration:line-through;color:var(--muted)}
+.note .meta{font-size:.74rem;color:var(--muted)}
+.x{background:none;border:0;color:var(--muted);padding:2px 6px;border-radius:8px;font-size:1rem}
+.x:hover{color:var(--bad);background:rgba(255,255,255,.1)}
+.addrow{display:flex;gap:8px;margin-top:10px}
+.in{flex:1;min-width:0;padding:10px 12px;border-radius:12px;border:1px solid var(--line);
+  background:rgba(0,0,0,.25);outline:none}
+.in::placeholder{color:#9fb0d3}
+.in:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(56,189,248,.25)}
+.btn{border:0;border-radius:12px;padding:10px 16px;font-weight:700;color:#fff;
+  background:linear-gradient(135deg,var(--acc),var(--acc2))}
+.btn:hover{filter:brightness(1.1)}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.ghost{background:var(--glass2);border:1px solid var(--line)}
+.btn.bad{background:linear-gradient(135deg,#f87171,#dc2626)}
+.btn.sm{padding:6px 12px;font-size:.85rem;border-radius:10px}
+.empty{text-align:center;color:var(--muted);padding:24px 10px;font-size:.9rem}
+
+/* chat */
+.shell{--chrome:215px}
+.shell.demo{--chrome:300px}
+.chat{display:flex;flex-direction:column;height:calc(100dvh - var(--chrome));min-height:320px;padding:12px}
+.msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px 8px}
+.msg{max-width:82%;padding:8px 12px;border-radius:16px;background:var(--glass2);border:1px solid var(--line);align-self:flex-start}
+.msg.me{align-self:flex-end;background:linear-gradient(135deg,rgba(56,189,248,.55),rgba(99,102,241,.55))}
+.msg .who{font-size:.74rem;font-weight:700;color:#bfe6ff}
+.msg .txt{word-break:break-word;white-space:pre-wrap}
+.msg .tm{font-size:.68rem;color:var(--muted);display:flex;gap:8px;justify-content:flex-end;align-items:center}
+.sendrow{display:flex;gap:8px;padding-top:8px;border-top:1px solid var(--line)}
+
+/* auth */
+.authwrap{min-height:100dvh;display:grid;place-items:center;padding:18px}
+.authcard{width:100%;max-width:400px;padding:26px 22px;text-align:center}
+.authcard img{width:120px;height:120px;border-radius:26px;object-fit:cover;border:1px solid var(--line);
+  box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.authcard h1{margin:12px 0 2px;font-size:1.4rem}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;margin:18px 0 14px;border-radius:14px;background:rgba(0,0,0,.25)}
+.seg button{border:0;background:transparent;padding:9px;border-radius:10px;font-weight:700;color:var(--muted)}
+.seg button.on{background:var(--glass2);color:#fff}
+.form{display:flex;flex-direction:column;gap:10px;text-align:left}
+.form label{font-size:.82rem;color:var(--muted);margin-bottom:-4px}
+.hint{font-size:.8rem;color:var(--muted);text-align:left}
+.err{color:#ffb4b4;font-size:.85rem;min-height:1.2em;text-align:left}
+
+/* admin */
+.sec{padding:14px 16px;margin-bottom:14px}
+.sec h3{margin:0 0 10px;font-size:1rem}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 0;border-top:1px dashed var(--line)}
+.row:first-of-type{border-top:0}
+.row .nm{flex:1;min-width:0;font-weight:600;word-break:break-all}
+.st{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px}
+.st.approved{background:rgba(52,211,153,.2);color:#8cf3cb}
+.st.pending{background:rgba(251,191,36,.2);color:#ffe08a}
+.st.blocked{background:rgba(248,113,113,.2);color:#ffb4b4}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:520px){.grid2{grid-template-columns:1fr}.nav button{padding:10px 14px}}
+
+/* peran, tanda tugas, peringatan, kas */
+dialog{max-height:90dvh;overflow:auto}
+.alerts{position:sticky;top:calc(env(safe-area-inset-top) + 8px);z-index:30;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.alerts:empty{display:none}
+.alert{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;
+  background:linear-gradient(135deg,rgba(251,191,36,.97),rgba(245,158,11,.97));color:#2b1b00;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);animation:pop .35s ease}
+.alert b{display:block}
+.alert .txt{flex:1;min-width:0;word-break:break-word}
+.alert small{opacity:.75}
+.alert .go{display:flex;gap:6px;flex:none}
+.alert button{border:0;border-radius:10px;padding:6px 10px;font-weight:700;background:rgba(0,0,0,.16);color:#2b1b00}
+@keyframes pop{from{transform:translateY(-12px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.72rem;font-weight:800;white-space:nowrap}
+.pill.task{background:var(--warn);color:#3b2a00}
+.pill.ok{background:var(--ok);color:#052e20}
+.pill.new{background:var(--bad);color:#fff;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.55}}
+.pills{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.lesson.hastask{box-shadow:0 0 0 1.5px rgba(251,191,36,.75),0 8px 30px rgba(0,0,0,.25)}
+.lesson.flash{animation:flash 1.8s ease}
+@keyframes flash{0%,60%{box-shadow:0 0 0 3px var(--acc),0 0 34px var(--acc)}}
+.daytab .cnt{position:absolute;top:-7px;right:-3px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;
+  background:var(--warn);color:#3b2a00;font-size:.72rem;font-weight:800;display:grid;place-items:center}
+.daytab .cnt.fresh{background:var(--bad);color:#fff}
+.hint.pad{margin:0 2px 10px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat{padding:12px 8px;text-align:center}
+.stat .v{font-weight:800;font-size:.98rem;word-break:break-word}
+.stat .l{font-size:.72rem;color:var(--muted)}
+.weeknav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.weeknav .wl{font-weight:700;text-align:center;flex:1}
+.bar{height:8px;border-radius:6px;background:rgba(255,255,255,.15);overflow:hidden;margin:8px 0 10px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ok),var(--acc));transition:width .3s}
+.stu{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px dashed var(--line)}
+.stu .no{width:24px;color:var(--muted);font-size:.8rem;text-align:right;flex:none}
+.stu .nm{flex:1;min-width:0;font-weight:600;word-break:break-word}
+.stu .tot{display:block;font-size:.72rem;color:var(--muted);font-weight:400}
+.pay{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:700;font-size:.82rem;
+  background:rgba(255,255,255,.1);min-width:84px;flex:none}
+.pay.on{background:var(--ok);color:#052e20;border-color:transparent}
+.fbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:4px 0 6px}
+.chipbtn{border:1px solid var(--line);background:var(--glass);border-radius:999px;padding:6px 12px;font-size:.82rem;font-weight:600}
+.chipbtn.on{background:var(--acc);color:#04243a;border-color:transparent}
+.exp{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px dashed var(--line)}
+.exp .t{flex:1;min-width:0;word-break:break-word}
+.exp small{display:block;color:var(--muted)}
+textarea.in{width:100%;resize:vertical;font:inherit}
+
+/* dialog + toast */
+dialog{border:1px solid var(--line);border-radius:var(--r);padding:20px;max-width:360px;width:calc(100% - 32px);
+  color:var(--text);background:rgba(12,30,66,.92);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+dialog h3{margin:0 0 12px}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 16px);transform:translateX(-50%);
+  background:rgba(12,30,66,.95);border:1px solid var(--line);padding:10px 16px;border-radius:14px;z-index:50;
+  max-width:90%;font-size:.9rem;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.splash{min-height:100dvh;display:grid;place-items:center;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"></div>
+<div id="app"><div class="splash">Memuat…</div></div>
+
+<script src="config.js"></script>
+<script type="module">
+/* ============ DATA JADWAL KELAS X-A (sumber: Jadwal Semester 1 TA 2026/2027, SMAN 1 Mlati) ============ */
+const TEACHERS = {
+  3:{n:"Yoga Aditya Sumantri, S.Pd., M.Pd.",s:"Pendidikan Agama Islam"},
+  7:{n:"Ervin Iswandayani, S.Pd.",s:"Pendidikan Pancasila"},
+  9:{n:"Dra. Suwarni",s:"Bahasa Indonesia"},
+  11:{n:"Dian Tri Handayani, S.Si.",s:"Matematika"},
+  12:{n:"Endra Prasetyana, S.Pd., M.Pd.",s:"Bahasa Inggris (Tk. Lanjut)"},
+  14:{n:"Dyah Astrianita, S.Pd.",s:"Seni Budaya"},
+  15:{n:"Rizka Restuningjati, S.Pd.",s:"Penjasorkes"},
+  16:{n:"Abdul Afif Rosyidi, S.Pd.",s:"Bahasa Jawa"},
+  18:{n:"Ratika Nur Jasmin, S.Pd.",s:"Fisika / PKWU"},
+  19:{n:"Sri Suprapti, S.Pd.",s:"Biologi"},
+  20:{n:"Permani Try Wijiarti, S.Pd.",s:"Kimia"},
+  21:{n:"Sukarni, S.Pd.",s:"Geografi"},
+  22:{n:"Sutrisni, S.Pd.",s:"Sosiologi"},
+  24:{n:"Anantyas Kusuma Dewi, S.Pd.",s:"Informatika"},
+  25:{n:"Sri Ati Ati, S.Pd.",s:"Sejarah"},
+  26:{n:"Yusuf Arif Setyawan, S.Pd.",s:"Ekonomi"},
+  29:{n:"Gabriella Larasati Anggitaningtyas, S.Pd.",s:"Bimbingan Konseling (BK)"},
+};
+const GRID = {
+  std:{1:["07.15","08.00"],2:["08.00","08.45"],3:["08.45","09.30"],4:["09.30","10.15"],5:["10.30","11.15"],
+       6:["11.15","12.00"],7:["12.20","13.05"],8:["13.05","13.50"],9:["13.50","14.35"],10:["14.35","15.20"]},
+  fri:{1:["07.10","07.55"],2:["07.55","08.40"],3:["08.40","09.20"],4:["09.35","10.20"],5:["10.20","11.00"],
+       6:["11.00","11.40"],7:["12.35","13.15"]},
+};
+const LIT = {t:"Literasi",s:"07.00",e:"07.15",i:"📖"};
+const IST = (s,e)=>({t:"Istirahat",s,e,i:"☕"});
+const DHR = {t:"Sholat Dhuhur Berjamaah",s:"12.00",e:"12.20",i:"🕌"};
+const DAYS = [
+  {name:"Senin",short:"Sen",grid:"std",
+   fixed:[LIT,{t:"Upacara Bendera",s:"07.15",e:"08.00",i:"🇮🇩"},IST("10.15","10.30"),DHR],
+   jam:{2:14,3:14,4:12,5:12,6:12,7:18,8:18,9:9,10:9}},
+  {name:"Selasa",short:"Sel",grid:"std",
+   fixed:[{...LIT,sub:"Didampingi guru jam ke-1"},IST("10.15","10.30"),DHR],
+   jam:{1:7,2:7,3:21,4:21,5:25,6:25,7:19,8:19,9:3,10:3}},
+  {name:"Rabu",short:"Rab",grid:"std",
+   fixed:[{...LIT,sub:"Didampingi guru jam ke-1"},IST("10.15","10.30"),DHR],
+   jam:{1:11,2:11,3:29,4:20,5:20,6:16,7:16,8:"K",9:"K",10:"K"}},
+  {name:"Kamis",short:"Kam",grid:"std",
+   fixed:[{...LIT,sub:"Didampingi guru jam ke-1"},IST("10.15","10.30"),DHR],
+   jam:{1:15,2:15,3:26,4:26,5:9,6:9,7:"K",8:"K",9:"K",10:"K"}},
+  {name:"Jumat",short:"Jum",grid:"fri",
+   fixed:[{t:"Tadarus / Bimbingan Rohani",s:"06.55",e:"07.10",i:"🕋"},IST("09.20","09.35"),
+          {t:"Sholat Jum'at Berjamaah",s:"11.40",e:"12.35",i:"🕌"}],
+   jam:{1:11,2:11,3:3,4:22,5:22,6:24,7:24}},
+];
+const toMin = s => { const [h,m]=s.split("."); return +h*60 + +m; };
+const KOK = "Pembelajaran Kokurikuler Lintas Mapel";
+
+function buildDay(di){
+  const d = DAYS[di], g = GRID[d.grid], out = [];
+  let cur = null;
+  for (const j of Object.keys(d.jam).map(Number).sort((a,b)=>a-b)){
+    const code = d.jam[j];
+    if (cur && cur.code===code && cur.jams.at(-1)===j-1) cur.jams.push(j);
+    else { cur = {kind:"lesson", code, jams:[j]}; out.push(cur); }
+  }
+  for (const b of out){
+    b.segs = [];
+    for (const j of b.jams){
+      const [s,e] = g[j], last = b.segs.at(-1);
+      if (last && last[1]===s) last[1]=e; else b.segs.push([s,e]);
+    }
+    b.start = b.segs[0][0]; b.end = b.segs.at(-1)[1];
+    b.id = `${di}-${b.code}`;
+  }
+  for (const f of d.fixed) out.push({kind:"fixed", ...f, start:f.s, end:f.e});
+  return out.sort((a,b)=>toMin(a.start)-toMin(b.start));
+}
+
+/* ============ UTIL ============ */
+const $ = (s,r=document)=>r.querySelector(s);
+function h(tag, props, ...kids){
+  const n = document.createElement(tag);
+  for (const [k,v] of Object.entries(props||{})){
+    if (v==null || v===false) continue;
+    if (k==="class") n.className = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else if (k in n) n[k] = v;
+    else n.setAttribute(k, v===true ? "" : v);
+  }
+  for (const c of kids.flat(9)){ if (c==null||c===false) continue; n.append(c.nodeType ? c : document.createTextNode(c)); }
+  return n;
+}
+const LS = {
+  get(k,d){ try{ const v=JSON.parse(localStorage.getItem(k)); return v==null?d:v; }catch{ return d; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch{} },
+};
+let toastTimer;
+function toast(msg){
+  $(".toast")?.remove(); clearTimeout(toastTimer);
+  document.body.append(h("div",{class:"toast",role:"status"},msg));
+  toastTimer = setTimeout(()=>$(".toast")?.remove(), 3500);
+}
+const uid = ()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const hue = s => { let x=0; for (const c of s) x=(x*31+c.charCodeAt(0))%360; return `hsl(${x} 85% 62%)`; };
+const fmtDate = ms => new Date(ms).toLocaleDateString("id-ID",{day:"numeric",month:"short"});
+const fmtTime = ms => new Date(ms).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}).replace(":",".");
+async function sha(s){
+  try{
+    const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+    return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
+  }catch{ let x=5381; for (const c of s) x=((x<<5)+x+c.charCodeAt(0))|0; return "f"+x; }
+}
+const OWNER = "azka";
+const ROLES = {
+  owner:{l:"Pemilik",i:"👑"}, ketua:{l:"Ketua Kelas",i:"⭐"}, sekretaris:{l:"Sekretaris",i:"📝"},
+  bendahara:{l:"Bendahara",i:"💰"}, member:{l:"Anggota",i:"👤"},
+};
+const ASSIGNABLE = ["member","sekretaris","bendahara","ketua"];
+const can = {
+  tasks:r=>["owner","ketua","sekretaris"].includes(r),
+  kas:r=>["owner","ketua","bendahara"].includes(r),
+  admin:r=>r==="owner",
+  moderate:r=>["owner","ketua"].includes(r),
+};
+const DOMAIN = "xa-avengers.example.com";
+const normUser = u => (u||"").trim().toLowerCase();
+function checkCreds(u,p,{checkPass=true}={}){
+  if (!/^[a-z0-9._-]{3,20}$/.test(u)) return "Username 3–20 karakter: huruf kecil, angka, titik, minus, garis bawah.";
+  if (checkPass && (p||"").length<6) return "Password minimal 6 karakter.";
+  return "";
+}
+
+/* ============ BACKEND LOKAL (mode demo, tanpa server) ============ */
+function makeLocal(){
+  const U="xa_users", N="xa_notes", M="xa_msgs", S="xa_session", K="xa_kas";
+  const subs = new Set(), emit = ()=>subs.forEach(f=>f());
+  addEventListener("storage", emit);
+  const users = ()=>LS.get(U,{});
+  const pub = u => ({uid:u.uid, username:u.username, role:u.role, status:u.status, createdAt:u.createdAt});
+  const watch = fn => { fn(); subs.add(fn); return ()=>subs.delete(fn); };
+  const me = ()=>{ const s=LS.get(S,null); const u=s&&users()[s.username]; return u?pub(u):null; };
+  return {
+    mode:"local",
+    watchSession(cb){ return watch(()=>cb(me())); },
+    async register(u,p){
+      const all = users();
+      if (all[u]) throw new Error("Username sudah dipakai.");
+      const owner = u===OWNER && !Object.values(all).some(x=>x.role==="owner");
+      const salt = uid(), hash = await sha(salt+p);
+      all[u] = {uid:uid(),username:u,salt,hash,role:owner?"owner":"member",status:owner?"approved":"pending",createdAt:Date.now()};
+      LS.set(U,all); LS.set(S,{username:u}); emit();
+    },
+    async login(u,p){
+      const x = users()[u];
+      if (!x || (await sha(x.salt+p))!==x.hash) throw new Error("Username atau password salah.");
+      LS.set(S,{username:u}); emit();
+    },
+    async logout(){ localStorage.removeItem(S); emit(); },
+    async changePassword(old,nw){
+      const all=users(), x=all[me().username];
+      if ((await sha(x.salt+old))!==x.hash) throw new Error("Password lama salah.");
+      x.salt=uid(); x.hash=await sha(x.salt+nw); LS.set(U,all);
+    },
+    watchMembers(cb){ return watch(()=>cb(Object.values(users()).map(pub).sort((a,b)=>a.createdAt-b.createdAt))); },
+    async setStatus(id,status){
+      const all=users(), x=Object.values(all).find(v=>v.uid===id); if(!x) return;
+      x.status=status; LS.set(U,all); emit();
+    },
+    async setRole(id,role){
+      const all=users(), x=Object.values(all).find(v=>v.uid===id);
+      if (!x || x.role==="owner" || !ASSIGNABLE.includes(role)) return;
+      x.role=role; LS.set(U,all); emit();
+    },
+    async createMember(u,p,role="member"){
+      const all=users(); if (all[u]) throw new Error("Username sudah dipakai.");
+      const salt=uid(); all[u]={uid:uid(),username:u,salt,hash:await sha(salt+p),role:ASSIGNABLE.includes(role)?role:"member",status:"approved",createdAt:Date.now()};
+      LS.set(U,all); emit();
+    },
+    watchNotes(cb){ return watch(()=>cb(LS.get(N,[]))); },
+    async addNote(key,text){ const a=LS.get(N,[]); a.push({id:uid(),key,text,by:me().username,uid:me().uid,ts:Date.now()}); LS.set(N,a); emit(); },
+    async deleteNote(id){ LS.set(N,LS.get(N,[]).filter(x=>x.id!==id)); emit(); },
+    async editNote(id,text){ const a=LS.get(N,[]), n=a.find(x=>x.id===id); if(n){ n.text=text; n.editedBy=me().username; LS.set(N,a); emit(); } },
+    watchKas(cb){ return watch(()=>cb(LS.get(K,{config:null,pays:{},exps:[]}))); },
+    async setKasConfig(cfg){ const k=LS.get(K,{config:null,pays:{},exps:[]}); k.config=cfg; LS.set(K,k); emit(); },
+    async setPaid(sid,week,amount,paid){
+      const k=LS.get(K,{config:null,pays:{},exps:[]}), key=sid+"_"+week;
+      if (paid) k.pays[key]={sid,week,amount,ts:Date.now(),by:me().username}; else delete k.pays[key];
+      LS.set(K,k); emit();
+    },
+    async addExpense(text,amount){ const k=LS.get(K,{config:null,pays:{},exps:[]}); k.exps.unshift({id:uid(),text,amount,ts:Date.now(),by:me().username}); LS.set(K,k); emit(); },
+    async deleteExpense(id){ const k=LS.get(K,{config:null,pays:{},exps:[]}); k.exps=k.exps.filter(x=>x.id!==id); LS.set(K,k); emit(); },
+    watchMessages(cb){ return watch(()=>cb(LS.get(M,[]))); },
+    async sendMessage(text){ const a=LS.get(M,[]); a.push({id:uid(),text,by:me().username,uid:me().uid,ts:Date.now()}); LS.set(M,a.slice(-300)); emit(); },
+    async deleteMessage(id){ LS.set(M,LS.get(M,[]).filter(x=>x.id!==id)); emit(); },
+  };
+}
+
+/* ============ BACKEND FIREBASE (chat & akun antar-perangkat) ============ */
+async function makeFirebase(cfg){
+  const base = "https://www.gstatic.com/firebasejs/10.14.1/";
+  const [A,Au,F] = await Promise.all([import(base+"firebase-app.js"),import(base+"firebase-auth.js"),import(base+"firebase-firestore.js")]);
+  const app = A.initializeApp(cfg), auth = Au.getAuth(app), db = F.getFirestore(app);
+  try{ await Au.setPersistence(auth, Au.browserLocalPersistence); }catch(e){ console.warn("persistence", e); }
+  const toEmail = u=>`${u}@${DOMAIN}`, fromEmail = e=>e.split("@")[0];
+  const OWNER_EMAIL = toEmail(OWNER);
+  let me = null;
+  const nice = e => {
+    const c = e?.code||"";
+    if (c.includes("email-already-in-use")) return new Error("Username sudah dipakai.");
+    if (c.includes("invalid-credential")||c.includes("wrong-password")||c.includes("user-not-found")||c.includes("invalid-login")) return new Error("Username atau password salah.");
+    if (c.includes("weak-password")) return new Error("Password minimal 6 karakter.");
+    if (c.includes("network")) return new Error("Tidak ada koneksi internet.");
+    if (c.includes("too-many-requests")) return new Error("Terlalu banyak percobaan. Coba lagi nanti.");
+    if (c.includes("operation-not-allowed")) return new Error("Login Email/Password belum diaktifkan di Firebase.");
+    if (c.includes("permission-denied")) return new Error("Ditolak oleh aturan keamanan (belum disetujui?).");
+    return e instanceof Error ? e : new Error(String(e));
+  };
+  const wrap = fn => async (...a)=>{ try{ return await fn(...a); }catch(e){ throw nice(e); } };
+  const ms = (d,k="createdAt")=> d[k]?.toMillis?.() ?? Date.now();
+  const snapOpts = {serverTimestamps:"estimate"};
+  return {
+    mode:"firebase",
+    watchSession(cb){
+      let unP = null;
+      const unA = Au.onAuthStateChanged(auth, user=>{
+        unP?.(); unP=null;
+        if (!user){ me=null; cb(null); return; }
+        const ref = F.doc(db,"users",user.uid);
+        unP = F.onSnapshot(ref, async snap=>{
+          if (!snap.exists()){
+            const owner = user.email===OWNER_EMAIL;
+            try{ await F.setDoc(ref,{username:fromEmail(user.email),role:owner?"owner":"member",status:owner?"approved":"pending",createdAt:F.serverTimestamp()}); }
+            catch(e){ console.error(e); toast("Gagal membuat profil: "+(e.code||e.message)); }
+            return;
+          }
+          const d = snap.data(snapOpts);
+          me = {uid:user.uid,username:d.username,role:d.role,status:d.status};
+          cb(me);
+        }, e=>{ console.error(e); toast("Gagal membaca profil: "+(e.code||e.message)); });
+      });
+      return ()=>{ unA(); unP?.(); };
+    },
+    register: wrap(async(u,p)=>{ await Au.createUserWithEmailAndPassword(auth,toEmail(u),p); }),
+    login: wrap(async(u,p)=>{ await Au.signInWithEmailAndPassword(auth,toEmail(u),p); }),
+    logout: wrap(async()=>{ await Au.signOut(auth); }),
+    changePassword: wrap(async(old,nw)=>{
+      const cu = auth.currentUser;
+      await Au.reauthenticateWithCredential(cu, Au.EmailAuthProvider.credential(cu.email,old));
+      await Au.updatePassword(cu,nw);
+    }),
+    watchMembers(cb){
+      return F.onSnapshot(F.collection(db,"users"), s=>cb(s.docs.map(d=>{ const x=d.data(snapOpts); return {uid:d.id,username:x.username,role:x.role,status:x.status,createdAt:ms(x)}; }).sort((a,b)=>a.createdAt-b.createdAt)),
+        e=>toast("Gagal memuat anggota: "+(e.code||e.message)));
+    },
+    setStatus: wrap(async(id,status)=>{ await F.updateDoc(F.doc(db,"users",id),{status}); }),
+    setRole: wrap(async(id,role)=>{ if (ASSIGNABLE.includes(role)) await F.updateDoc(F.doc(db,"users",id),{role}); }),
+    createMember: wrap(async(u,p,role="member")=>{
+      const sec = A.initializeApp(cfg,"sec"+Date.now()), sa = Au.getAuth(sec);
+      try{
+        const c = await Au.createUserWithEmailAndPassword(sa,toEmail(u),p);
+        await F.setDoc(F.doc(db,"users",c.user.uid),{username:u,role:ASSIGNABLE.includes(role)?role:"member",status:"approved",createdAt:F.serverTimestamp()});
+        await Au.signOut(sa);
+      } finally { try{ await A.deleteApp(sec); }catch{} }
+    }),
+    watchNotes(cb){
+      return F.onSnapshot(F.query(F.collection(db,"notes"),F.orderBy("ts","asc"),F.limit(1000)),
+        s=>cb(s.docs.map(d=>{ const x=d.data(snapOpts); return {id:d.id,key:x.key,text:x.text,by:x.by,uid:x.uid,editedBy:x.editedBy,ts:ms(x,"ts")}; })),
+        e=>toast("Gagal memuat catatan: "+(e.code||e.message)));
+    },
+    addNote: wrap(async(key,text)=>{ await F.addDoc(F.collection(db,"notes"),{key,text,by:me.username,uid:me.uid,ts:F.serverTimestamp()}); }),
+    deleteNote: wrap(async id=>{ await F.deleteDoc(F.doc(db,"notes",id)); }),
+    editNote: wrap(async(id,text)=>{ await F.updateDoc(F.doc(db,"notes",id),{text,editedBy:me.username,editedAt:F.serverTimestamp()}); }),
+    watchKas(cb){
+      const st = {config:null,pays:{},exps:[]};
+      const out = ()=>cb({config:st.config,pays:{...st.pays},exps:[...st.exps]});
+      const err = e=>toast("Gagal memuat kas: "+(e.code||e.message));
+      const u1 = F.onSnapshot(F.doc(db,"kas","config"), sn=>{ st.config = sn.exists()?sn.data():null; out(); }, err);
+      const u2 = F.onSnapshot(F.collection(db,"kasPayments"), sn=>{
+        st.pays = {}; sn.docs.forEach(d=>{ const x=d.data(snapOpts); st.pays[d.id]={sid:x.sid,week:x.week,amount:x.amount,ts:ms(x,"ts"),by:x.by}; }); out(); }, err);
+      const u3 = F.onSnapshot(F.query(F.collection(db,"kasExpenses"),F.orderBy("ts","desc")), sn=>{
+        st.exps = sn.docs.map(d=>{ const x=d.data(snapOpts); return {id:d.id,text:x.text,amount:x.amount,ts:ms(x,"ts"),by:x.by}; }); out(); }, err);
+      return ()=>{ u1(); u2(); u3(); };
+    },
+    setKasConfig: wrap(async cfg=>{ await F.setDoc(F.doc(db,"kas","config"),{names:cfg.names,amount:cfg.amount}); }),
+    setPaid: wrap(async(sid,week,amount,paid)=>{
+      const ref = F.doc(db,"kasPayments",`${sid}_${week}`);
+      if (paid) await F.setDoc(ref,{sid,week,amount,by:me.username,ts:F.serverTimestamp()}); else await F.deleteDoc(ref);
+    }),
+    addExpense: wrap(async(text,amount)=>{ await F.addDoc(F.collection(db,"kasExpenses"),{text,amount,by:me.username,ts:F.serverTimestamp()}); }),
+    deleteExpense: wrap(async id=>{ await F.deleteDoc(F.doc(db,"kasExpenses",id)); }),
+    watchMessages(cb){
+      return F.onSnapshot(F.query(F.collection(db,"messages"),F.orderBy("ts","desc"),F.limit(150)),
+        s=>cb(s.docs.map(d=>{ const x=d.data(snapOpts); return {id:d.id,text:x.text,by:x.by,uid:x.uid,ts:ms(x,"ts")}; }).reverse()),
+        e=>toast("Gagal memuat chat: "+(e.code||e.message)));
+    },
+    sendMessage: wrap(async text=>{ await F.addDoc(F.collection(db,"messages"),{text,by:me.username,uid:me.uid,ts:F.serverTimestamp()}); }),
+    deleteMessage: wrap(async id=>{ await F.deleteDoc(F.doc(db,"messages",id)); }),
+  };
+}
+
+/* ============ STATE ============ */
+const app = $("#app");
+const S = {
+  be:null, me:null, sig:"", subs:[], tab:"jadwal",
+  day:(()=>{ const d=(new Date().getDay()+6)%7; return d<5?d:0; })(),
+  notes:{}, msgs:[], members:[], drafts:{}, done:new Set(LS.get("xa_done",[])),
+  alerts:[], knownNotes:null, seen:null, kas:{config:null,pays:{},exps:[]}, kasWeek:null, kasFilter:"all",
+};
+const realToday = (()=>{ const d=(new Date().getDay()+6)%7; return d<5?d:-1; })();
+const nowMin = ()=>{ const d=new Date(); return d.getHours()*60+d.getMinutes(); };
+const isOwner = ()=>S.me?.role==="owner";
+const myRole = ()=>S.me?.role||"member";
+
+/* ============ LAYAR LOGIN / GERBANG ============ */
+function renderAuth(){
+  let mode = "login";
+  const card = h("div",{class:"glass authcard"});
+  const draw = ()=>{
+    const user = h("input",{class:"in",id:"u",autocomplete:"username",placeholder:"mis. azka",maxLength:20,autocapitalize:"none"});
+    const pass = h("input",{class:"in",id:"p",type:"password",autocomplete:mode==="login"?"current-password":"new-password",placeholder:"Minimal 6 karakter"});
+    const err = h("div",{class:"err",role:"alert"});
+    const go = h("button",{class:"btn",type:"submit"},mode==="login"?"Masuk":"Daftar & minta izin");
+    const form = h("form",{class:"form",onsubmit:async e=>{
+      e.preventDefault();
+      const u = normUser(user.value), p = pass.value, m = checkCreds(u,p);
+      if (m){ err.textContent=m; return; }
+      go.disabled = true; err.textContent="";
+      try{ await (mode==="login" ? S.be.login(u,p) : S.be.register(u,p)); }
+      catch(x){ err.textContent = x.message; go.disabled=false; }
+    }},
+      h("label",{htmlFor:"u"},"Username"), user,
+      h("label",{htmlFor:"p"},"Password"), pass, err, go,
+      mode==="register" ? h("div",{class:"hint"},"Setelah mendaftar, akunmu harus disetujui Azka (pemilik web). Kamu juga bisa minta Azka membuatkan username & password langsung dari Admin Panel. Kamu akan tetap masuk di perangkat ini sampai menekan tombol Keluar.") : null
+    );
+    card.replaceChildren(
+      h("img",{src:"logo.jpg",alt:"Logo X-A Avengers"}),
+      h("h1",{},"X-A AVENGERS"),
+      h("div",{class:"muted"},"SMA Negeri 1 Mlati · Angkatan XXIX"),
+      h("div",{class:"seg"},
+        h("button",{type:"button",class:mode==="login"?"on":"",onclick:()=>{mode="login";draw();}},"Masuk"),
+        h("button",{type:"button",class:mode==="register"?"on":"",onclick:()=>{mode="register";draw();}},"Daftar")),
+      form,
+      S.be.mode==="local" ? h("div",{class:"hint",style:"margin-top:14px"},"⚠️ Mode demo lokal: akun & chat hanya ada di browser ini. Lihat README untuk mengaktifkan Firebase.") : null
+    );
+    user.focus();
+  };
+  draw();
+  app.replaceChildren(h("div",{class:"authwrap"},card));
+}
+
+function renderGate(p){
+  const blocked = p.status!=="pending";
+  app.replaceChildren(h("div",{class:"authwrap"},
+    h("div",{class:"glass authcard"},
+      h("img",{src:"logo.jpg",alt:""}),
+      h("h1",{},blocked?"Akses ditolak":"Menunggu persetujuan"),
+      h("p",{class:"muted"},blocked
+        ? `Akun @${p.username} tidak punya akses. Hubungi Azka jika ini keliru.`
+        : `Halo @${p.username}! Permintaan aksesmu sudah terkirim. Halaman ini otomatis terbuka begitu Azka menyetujui.`),
+      h("button",{class:"btn ghost",onclick:()=>S.be.logout()},"Keluar"))));
+}
+
+/* ============ SHELL APLIKASI ============ */
+const BASE_TITLE = document.title;
+document.addEventListener("visibilitychange",()=>{ if (!document.hidden) document.title = BASE_TITLE; });
+
+function startApp(){
+  const role = myRole(), R = ROLES[role]||ROLES.member;
+  const nav = h("nav",{class:"glass nav",role:"tablist"});
+  const tabs = [["jadwal","📅","Jadwal"],["chat","💬","Chat"]];
+  if (can.kas(role)) tabs.push(["kas","💰","Kas"]);
+  if (can.admin(role)) tabs.push(["admin","🛡️","Admin"]);
+  const draw = ()=>{
+    nav.replaceChildren(...tabs.map(([k,ic,lb])=>{
+      const n = k==="chat" ? unread() : k==="admin" ? S.members.filter(m=>m.status==="pending").length : 0;
+      return h("button",{class:S.tab===k?"on":"",role:"tab",onclick:()=>setTab(k)},ic," ",lb,n?h("span",{class:"dot"},n):null);
+    }));
+  };
+  S.drawNav = draw;
+  const canBell = "Notification" in window && Notification.permission==="default";
+  app.replaceChildren(h("div",{class:"shell"+(S.be.mode==="local"?" demo":"")},
+    h("header",{class:"glass top"},
+      h("img",{src:"logo.jpg",alt:"Logo X-A"}),
+      h("div",{class:"ttl"},h("h1",{},"X-A AVENGERS"),h("small",{},R.i," ",R.l," · @",S.me.username)),
+      canBell ? h("button",{class:"iconbtn",title:"Aktifkan notifikasi tugas baru","aria-label":"Aktifkan notifikasi",onclick:enableNotif},"🔔") : null,
+      h("button",{class:"iconbtn",title:"Ganti password","aria-label":"Ganti password",onclick:pwDialog},"🔑"),
+      h("button",{class:"iconbtn",title:"Keluar","aria-label":"Keluar",onclick:()=>S.be.logout()},"🚪")),
+    S.be.mode==="local" ? h("div",{class:"banner"},"Mode demo lokal — data hanya di browser ini. Isi config.js (lihat README) agar chat antar-perangkat berfungsi.") : null,
+    h("div",{class:"alerts",id:"alerts"}),
+    h("main",{},
+      h("section",{id:"v-jadwal"}),
+      h("section",{id:"v-chat",hidden:true}),
+      can.kas(role) ? h("section",{id:"v-kas",hidden:true}) : null,
+      can.admin(role) ? h("section",{id:"v-admin",hidden:true}) : null)),
+    nav);
+  draw(); renderSchedule(); renderChat();
+  if (can.kas(role)) renderKas();
+  if (can.admin(role)) renderAdmin();
+  S.subs.push(S.be.watchNotes(a=>{
+    const next = {}; for (const n of a) (next[n.key] ||= []).push(n);
+    S.notes = next;
+    handleNoteChanges(a);
+    renderSchedule();
+  }));
+  S.subs.push(S.be.watchMessages(a=>{ S.msgs=a; renderChat(); draw(); }));
+  if (can.kas(role)) S.subs.push(S.be.watchKas(k=>{ S.kas=k; renderKas(); }));
+  if (can.admin(role)) S.subs.push(S.be.watchMembers(a=>{ S.members=a; renderAdmin(); draw(); }));
+  const iv = setInterval(()=>{
+    const ae = document.activeElement;
+    if (S.tab==="jadwal" && realToday>=0 && !(ae && ae.tagName==="INPUT" && ae.closest("#v-jadwal"))) renderSchedule();
+  },30000);
+  S.subs.push(()=>clearInterval(iv));
+}
+async function enableNotif(e){
+  const btn = e.currentTarget;
+  try{
+    const p = await Notification.requestPermission();
+    toast(p==="granted" ? "Notifikasi tugas baru aktif 🔔" : "Notifikasi tidak diizinkan di browser ini.");
+    if (p!=="default") btn.remove();
+  }catch{ toast("Browser ini belum mendukung notifikasi."); }
+}
+function setTab(k){
+  S.tab = k;
+  for (const t of ["jadwal","chat","kas","admin"]){ const el=$("#v-"+t); if (el) el.hidden = t!==k; }
+  if (k==="chat"){ markSeen(); renderChat(true); }
+  S.drawNav?.();
+}
+const seenKey = ()=>`xa_seen_${S.me.uid}`;
+function markSeen(){ const l=S.msgs.at(-1); if (l) LS.set(seenKey(),l.ts); }
+function unread(){
+  if (S.tab==="chat") return 0;
+  const seen = LS.get(seenKey(),0);
+  return S.msgs.filter(m=>m.ts>seen && m.uid!==S.me.uid).length;
+}
+
+/* ============ JADWAL ============ */
+const lessonInfo = key=>{
+  const [d,c] = key.split("-"), t = c==="K" ? null : TEACHERS[+c];
+  return {di:+d, subject:c==="K" ? KOK : (t?.s||"Pelajaran"), teacher:t?.n||""};
+};
+const seenNotesKey = ()=>`xa_seen_notes_${S.me.uid}`;
+const isNew = n => !!S.seen && n.uid!==S.me.uid && !S.seen.has(n.id);
+
+function dayStats(di){
+  let undone=0, fresh=0;
+  for (const it of buildDay(di)) if (it.kind==="lesson") for (const n of S.notes[it.id]||[]){
+    if (!S.done.has(n.id)) undone++;
+    if (isNew(n)) fresh++;
+  }
+  return {undone,fresh};
+}
+
+/* Deteksi tugas baru dari orang lain -> peringatan untuk semua */
+function handleNoteChanges(all){
+  const ids = new Set(all.map(n=>n.id));
+  if (!S.knownNotes){
+    S.knownNotes = ids;
+    let arr = LS.get(seenNotesKey(),null);
+    if (arr===null){ arr=[...ids]; LS.set(seenNotesKey(),arr); }   // perangkat baru: tugas lama dianggap sudah dilihat
+    S.seen = new Set(arr);
+    return;
+  }
+  const fresh = all.filter(n=>!S.knownNotes.has(n.id) && n.uid!==S.me.uid);
+  S.knownNotes = ids;
+  fresh.forEach(announce);
+}
+function announce(n){
+  const info = lessonInfo(n.key);
+  const a = {id:n.id, key:n.key, title:`Tugas baru · ${info.subject}`, sub:`${DAYS[info.di].name}: ${n.text}`, by:n.by};
+  S.alerts = [a,...S.alerts].slice(0,3);
+  drawAlerts();
+  document.title = `(${S.alerts.length}) Tugas baru! · X-A Avengers`;
+  notify(a.title, `@${n.by}: ${n.text}`);
+  try{ navigator.vibrate?.([120,60,120]); }catch{}
+}
+function drawAlerts(){
+  const box = $("#alerts"); if (!box) return;
+  box.replaceChildren(...S.alerts.map(a=>h("div",{class:"alert",role:"alert"},
+    h("span",{style:"font-size:1.5rem"},"📌"),
+    h("div",{class:"txt"},h("b",{},a.title),h("div",{},a.sub),h("small",{},`ditambahkan oleh @${a.by}`)),
+    h("div",{class:"go"},
+      h("button",{onclick:()=>openTask(a)},"Lihat"),
+      h("button",{"aria-label":"Tutup",onclick:()=>dismissAlert(a.id)},"✕")))));
+  if (!S.alerts.length) document.title = BASE_TITLE;
+}
+function dismissAlert(id){ S.alerts = S.alerts.filter(a=>a.id!==id); drawAlerts(); }
+function openTask(a){
+  S.day = lessonInfo(a.key).di;
+  dismissAlert(a.id);
+  setTab("jadwal"); renderSchedule();
+  const el = document.querySelector(`[data-key="${a.key}"]`);
+  if (el){ el.scrollIntoView({behavior:"smooth",block:"center"}); el.classList.add("flash"); setTimeout(()=>el.classList.remove("flash"),2000); }
+}
+async function notify(title, body){
+  if (!("Notification" in window) || Notification.permission!=="granted") return;
+  try{
+    const reg = await navigator.serviceWorker?.getRegistration();
+    if (reg?.showNotification) return await reg.showNotification(title,{body,icon:"icon-192.png",badge:"icon-192.png",tag:"xa-tugas"});
+    new Notification(title,{body,icon:"icon-192.png"});
+  }catch{}
+}
+let seenTimer;
+function scheduleSeen(){
+  clearTimeout(seenTimer);
+  seenTimer = setTimeout(()=>{
+    if (S.tab!=="jadwal" || document.hidden || !S.seen) return;
+    const ae = document.activeElement;
+    if (ae && ae.tagName==="INPUT" && ae.closest("#v-jadwal")){ scheduleSeen(); return; }
+    const ids = [];
+    for (const it of buildDay(S.day)) if (it.kind==="lesson") for (const n of S.notes[it.id]||[]) if (isNew(n)) ids.push(n.id);
+    if (!ids.length) return;
+    ids.forEach(i=>S.seen.add(i));
+    LS.set(seenNotesKey(),[...S.seen]);
+    renderSchedule();
+  },3000);
+}
+
+function renderSchedule(){
+  const box = $("#v-jadwal"); if (!box) return;
+  const ae = document.activeElement;
+  const keepFocus = ae && ae.tagName==="INPUT" && box.contains(ae) ? ae.dataset.in : null;
+  const di = S.day, items = buildDay(di), isToday = di===realToday, nm = nowMin();
+  const inNow = (s,e)=> isToday && nm>=toMin(s) && nm<toMin(e);
+  const lessons = items.filter(i=>i.kind==="lesson");
+  const tabs = h("div",{class:"daytabs"},DAYS.map((d,i)=>{
+    const st = dayStats(i);
+    return h("button",{class:"daytab"+(i===di?" on":"")+(i===realToday?" today":""),onclick:()=>{S.day=i;renderSchedule();}},
+      d.name, st.undone ? h("span",{class:"cnt"+(st.fresh?" fresh":""),title:`${st.undone} tugas`},st.undone) : null);
+  }));
+  const list = items.map(it=>{
+    if (it.kind==="fixed"){
+      return h("div",{class:"fixed"+(inNow(it.s,it.e)?" live":"")},
+        h("span",{},it.i),h("span",{class:"t"},it.t,it.sub?h("div",{style:"font-size:.75rem"},it.sub):null),
+        h("span",{},`${it.s}–${it.e}`));
+    }
+    return lessonCard(di,it,inNow);
+  });
+  box.replaceChildren(tabs,
+    can.tasks(myRole()) ? "" : h("div",{class:"hint pad"},"ℹ️ Tugas ditambahkan oleh Sekretaris / Ketua Kelas. Centang untuk menandai selesai (khusus di perangkatmu)."),
+    h("div",{class:"dayhead"},h("h2",{},DAYS[di].name,isToday?h("span",{class:"chip",style:"margin-left:10px;font-size:.7rem"},"Hari ini"):null),
+      h("span",{class:"muted"},`${lessons.length} sesi · ${lessons[0].start}–${lessons.at(-1).end}`)),
+    ...list);
+  if (keepFocus){ const el = box.querySelector(`input[data-in="${keepFocus}"]`); if (el){ el.focus(); const l=el.value.length; try{ el.setSelectionRange(l,l); }catch{} } }
+  scheduleSeen();
+}
+
+function lessonCard(di,b,inNow){
+  const isK = b.code==="K", t = isK?null:TEACHERS[b.code];
+  const subject = isK?KOK:t.s, color = hue(subject);
+  const live = b.segs.some(([s,e])=>inNow(s,e));
+  const notes = S.notes[b.id]||[];
+  const canEdit = can.tasks(myRole());
+  const undone = notes.filter(n=>!S.done.has(n.id)).length;
+  const fresh = notes.some(isNew);
+  const input = canEdit ? h("input",{class:"in","data-in":b.id,placeholder:"Tambah tugas / catatan…",maxLength:300,value:S.drafts[b.id]||"",
+    oninput:e=>{ S.drafts[b.id]=e.target.value; },
+    onkeydown:e=>{ if (e.key==="Enter"){ e.preventDefault(); add(); } }}) : null;
+  async function add(){
+    const v = input.value.trim(); if (!v) return;
+    try{ await S.be.addNote(b.id,v); S.drafts[b.id]=""; input.value=""; }
+    catch(x){ toast(x.message); }
+  }
+  const jamLbl = b.jams.length>1 ? `Jam ${b.jams[0]}–${b.jams.at(-1)}` : `Jam ${b.jams[0]}`;
+  return h("article",{class:"glass lesson"+(live?" live":"")+(notes.length?" hastask":""),style:`--c:${color}`,"data-key":b.id},
+    h("div",{class:"lhead"},
+      h("div",{},h("span",{class:"time"},b.segs.map(([s,e])=>`${s}–${e}`).join(" · ")),h("span",{class:"jam"},jamLbl),
+        h("div",{class:"subj"},subject),
+        t?h("div",{class:"teach"},"👨‍🏫 ",t.n):h("div",{class:"teach"},"Seluruh kelas X")),
+      h("div",{class:"pills"},
+        fresh ? h("span",{class:"pill new"},"BARU") : null,
+        notes.length ? (undone ? h("span",{class:"pill task"},`📌 ${undone} tugas`) : h("span",{class:"pill ok"},"✓ Selesai")) : null,
+        live ? h("span",{class:"badge"},"Berlangsung") : null)),
+    h("ul",{class:"notes"},
+      notes.length ? notes.map(n=>{
+        const d = S.done.has(n.id);
+        return h("li",{class:"note"+(d?" done":"")},
+          h("input",{type:"checkbox",checked:d,"aria-label":"Tandai selesai",onchange:e=>{
+            e.target.checked?S.done.add(n.id):S.done.delete(n.id); LS.set("xa_done",[...S.done]); renderSchedule(); }}),
+          h("div",{class:"body"},h("div",{class:"txt"},n.text),
+            h("div",{class:"meta"},`@${n.by} · ${fmtDate(n.ts)}`+(n.editedBy?` · diedit @${n.editedBy}`:""),isNew(n)?" · ":null,isNew(n)?h("span",{class:"pill new"},"BARU"):null)),
+          canEdit ? [
+            h("button",{class:"x",title:"Edit tugas","aria-label":"Edit tugas",onclick:()=>editNoteDialog(n)},"✎"),
+            h("button",{class:"x",title:"Hapus tugas","aria-label":"Hapus tugas",onclick:()=>{ if (confirm("Hapus tugas ini?")) S.be.deleteNote(n.id).catch(x=>toast(x.message)); }},"✕")
+          ] : null);
+      }) : h("li",{class:"empty",style:"padding:8px 0"},"Belum ada tugas.")),
+    canEdit ? h("div",{class:"addrow"},input,h("button",{class:"btn sm",type:"button",onclick:add},"Tambah")) : null);
+}
+function editNoteDialog(n){
+  const inp = h("input",{class:"in",value:n.text,maxLength:500,"aria-label":"Isi tugas"});
+  const dlg = h("dialog",{},h("h3",{},"Edit tugas"),
+    h("form",{class:"form",method:"dialog",onsubmit:async e=>{
+      e.preventDefault();
+      const v = inp.value.trim(); if (!v) return;
+      try{ await S.be.editNote(n.id,v); dlg.close(); toast("Tugas diperbarui."); }catch(x){ toast(x.message); }
+    }},inp,h("div",{class:"grid2"},
+      h("button",{class:"btn ghost",type:"button",onclick:()=>dlg.close()},"Batal"),
+      h("button",{class:"btn",type:"submit"},"Simpan"))));
+  dlg.addEventListener("close",()=>dlg.remove());
+  document.body.append(dlg); dlg.showModal(); inp.focus();
+}
+
+/* ============ CHAT ============ */
+function renderChat(forceBottom){
+  const box = $("#v-chat"); if (!box) return;
+  let wrap = $(".chat",box), list;
+  if (!wrap){
+    const input = h("input",{class:"in",id:"chatin",placeholder:"Tulis pesan…",maxLength:500,autocomplete:"off",
+      onkeydown:e=>{ if(e.key==="Enter"){ e.preventDefault(); send(); } }});
+    const send = async()=>{
+      const v = input.value.trim(); if (!v) return;
+      input.value="";
+      try{ await S.be.sendMessage(v); }catch(x){ toast(x.message); input.value=v; }
+    };
+    wrap = h("div",{class:"glass chat"},h("div",{class:"msgs",id:"msgs",role:"log","aria-live":"polite"}),
+      h("div",{class:"sendrow"},input,h("button",{class:"btn",type:"button",onclick:send},"Kirim")));
+    box.replaceChildren(wrap);
+  }
+  list = $("#msgs",wrap);
+  const atBottom = forceBottom || list.scrollHeight-list.scrollTop-list.clientHeight<80;
+  list.replaceChildren(...(S.msgs.length ? S.msgs.map(m=>{
+    const mine = m.uid===S.me.uid;
+    return h("div",{class:"msg"+(mine?" me":"")},
+      mine?null:h("div",{class:"who"},"@",m.by),
+      h("div",{class:"txt"},m.text),
+      h("div",{class:"tm"},fmtTime(m.ts),(mine||can.moderate(myRole()))?h("button",{class:"x",style:"font-size:.7rem",title:"Hapus pesan",onclick:()=>S.be.deleteMessage(m.id).catch(x=>toast(x.message))},"hapus"):null));
+  }) : [h("div",{class:"empty"},"Belum ada pesan. Sapa teman sekelasmu! 👋")]));
+  if (atBottom) list.scrollTop = list.scrollHeight;
+  if (S.tab==="chat") markSeen();
+}
+
+/* ============ UANG KAS (azka, ketua, bendahara) ============ */
+const KAS_N = 36, KAS_DEFAULT = 5000;
+const rp = n => "Rp " + Math.round(n||0).toLocaleString("id-ID");
+const dkey = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const fromKey = k => { const [y,m,d]=k.split("-").map(Number); return new Date(y,m-1,d); };
+function weekStart(d){ const x=new Date(d); x.setHours(0,0,0,0); x.setDate(x.getDate()-((x.getDay()+6)%7)); return x; }
+function weekLabel(k){
+  const a=fromKey(k), b=new Date(a); b.setDate(b.getDate()+6);
+  const f = d=>d.toLocaleDateString("id-ID",{day:"numeric",month:"short"});
+  return `${f(a)} – ${f(b)} ${b.getFullYear()}`;
+}
+function shiftWeek(k,n){ const d=fromKey(k); d.setDate(d.getDate()+7*n); return dkey(d); }
+const kasNames = ()=>{ const n=S.kas.config?.names; return Array.from({length:KAS_N},(_,i)=>(n&&n[i])||`Siswa ${i+1}`); };
+const kasAmount = ()=> S.kas.config?.amount ?? KAS_DEFAULT;
+
+function buildKas(box){
+  const text = h("input",{class:"in",placeholder:"Keterangan (mis. beli spidol)",maxLength:100});
+  const amount = h("input",{class:"in",type:"number",inputMode:"numeric",min:1,placeholder:"Jumlah (Rp)"});
+  const err = h("div",{class:"err"});
+  const btn = h("button",{class:"btn",type:"submit"},"Catat pengeluaran");
+  const form = h("form",{class:"form",onsubmit:async e=>{
+    e.preventDefault();
+    const t = text.value.trim(), a = Math.round(Number(amount.value));
+    if (!t || !(a>0)){ err.textContent="Isi keterangan dan jumlah yang benar."; return; }
+    btn.disabled = true; err.textContent="";
+    try{ await S.be.addExpense(t,a); text.value=""; amount.value=""; }catch(x){ err.textContent=x.message; }
+    btn.disabled = false;
+  }},h("div",{class:"grid2"},text,amount),err,btn);
+  const a = h("div"), b = h("div");
+  box.replaceChildren(a,h("div",{class:"glass sec"},h("h3",{},"Catat pengeluaran"),form),b);
+  S.kasEls = {a,b};
+}
+function renderKas(){
+  const box = $("#v-kas"); if (!box) return;
+  if (!S.kasEls || !box.contains(S.kasEls.a)) buildKas(box);
+  const thisWk = dkey(weekStart(new Date()));
+  if (!S.kasWeek) S.kasWeek = thisWk;
+  const wk = S.kasWeek, names = kasNames(), amt = kasAmount();
+  const pays = Object.values(S.kas.pays||{});
+  const masuk = pays.reduce((a,p)=>a+(p.amount||0),0);
+  const keluar = (S.kas.exps||[]).reduce((a,e)=>a+(e.amount||0),0);
+  const wkPays = pays.filter(p=>p.week===wk);
+  const paidSet = new Set(wkPays.map(p=>p.sid));
+  const wkSum = wkPays.reduce((a,p)=>a+(p.amount||0),0);
+  const totBy = {}; pays.forEach(p=>{ totBy[p.sid]=(totBy[p.sid]||0)+(p.amount||0); });
+  const stat = (l,v)=>h("div",{class:"glass stat"},h("div",{class:"v"},v),h("div",{class:"l"},l));
+  const rows = names.map((nm,i)=>({nm,i,paid:paidSet.has(i)})).filter(r=>S.kasFilter==="all"||!r.paid);
+  const act = fn=>async()=>{ try{ await fn(); }catch(x){ toast(x.message); } };
+  S.kasEls.a.replaceChildren(
+    h("div",{class:"stats"},stat("Saldo kas",rp(masuk-keluar)),stat("Total masuk",rp(masuk)),stat("Total keluar",rp(keluar))),
+    h("div",{class:"glass sec"},
+      h("div",{class:"weeknav"},
+        h("button",{class:"iconbtn","aria-label":"Minggu sebelumnya",onclick:()=>{ S.kasWeek=shiftWeek(wk,-1); renderKas(); }},"‹"),
+        h("div",{class:"wl"},weekLabel(wk),h("div",{class:"muted",style:"font-size:.75rem;font-weight:500"},wk===thisWk?"Minggu ini":"Iuran "+rp(amt)+"/minggu")),
+        h("button",{class:"iconbtn","aria-label":"Minggu berikutnya",disabled:wk>=thisWk,onclick:()=>{ S.kasWeek=shiftWeek(wk,1); renderKas(); }},"›")),
+      h("div",{style:"display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"},
+        h("b",{},`${paidSet.size}/${KAS_N} sudah bayar`),h("span",{class:"muted"},`${rp(wkSum)} dari ${rp(KAS_N*amt)}`)),
+      h("div",{class:"bar"},h("i",{style:`width:${Math.round(paidSet.size/KAS_N*100)}%`})),
+      h("div",{class:"fbar"},
+        h("button",{class:"chipbtn"+(S.kasFilter==="all"?" on":""),onclick:()=>{ S.kasFilter="all"; renderKas(); }},"Semua (36)"),
+        h("button",{class:"chipbtn"+(S.kasFilter==="belum"?" on":""),onclick:()=>{ S.kasFilter="belum"; renderKas(); }},`Belum bayar (${KAS_N-paidSet.size})`),
+        h("button",{class:"chipbtn",style:"margin-left:auto",onclick:kasSettings},"⚙️ Pengaturan")),
+      rows.length ? rows.map(r=>h("div",{class:"stu"},
+        h("span",{class:"no"},r.i+1),
+        h("div",{class:"nm"},r.nm,h("span",{class:"tot"},`Total dibayar ${rp(totBy[r.i]||0)}`)),
+        h("button",{class:"pay"+(r.paid?" on":""),"aria-pressed":r.paid,onclick:act(()=>S.be.setPaid(r.i,wk,r.paid?(wkPays.find(p=>p.sid===r.i)?.amount||amt):amt,!r.paid))},r.paid?"✓ Lunas":"Belum")))
+        : h("div",{class:"empty"},"🎉 Semua sudah bayar minggu ini!")));
+  S.kasEls.b.replaceChildren(h("div",{class:"glass sec"},h("h3",{},"Riwayat pengeluaran"),
+    (S.kas.exps||[]).length ? S.kas.exps.map(e=>h("div",{class:"exp"},
+      h("div",{class:"t"},e.text,h("small",{},`${fmtDate(e.ts)} · @${e.by}`)),
+      h("b",{},rp(e.amount)),
+      h("button",{class:"x","aria-label":"Hapus pengeluaran",title:"Hapus",onclick:()=>{ if (confirm("Hapus pengeluaran ini?")) act(()=>S.be.deleteExpense(e.id))(); }},"✕")))
+      : h("div",{class:"empty"},"Belum ada pengeluaran.")));
+}
+function kasSettings(){
+  const amt = h("input",{class:"in",type:"number",inputMode:"numeric",min:0,value:kasAmount(),"aria-label":"Iuran per minggu"});
+  const ta = h("textarea",{class:"in",rows:12,value:kasNames().join("\n"),"aria-label":"Nama siswa"});
+  const err = h("div",{class:"err"});
+  const dlg = h("dialog",{},h("h3",{},"Pengaturan kas"),
+    h("form",{class:"form",method:"dialog",onsubmit:async e=>{
+      e.preventDefault();
+      const a = Math.round(Number(amt.value));
+      if (!(a>=0)){ err.textContent="Nominal tidak valid."; return; }
+      const lines = ta.value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,KAS_N);
+      const names = Array.from({length:KAS_N},(_,i)=>(lines[i]||`Siswa ${i+1}`).slice(0,40));
+      try{ await S.be.setKasConfig({names,amount:a}); dlg.close(); toast("Pengaturan kas disimpan."); }
+      catch(x){ err.textContent=x.message; }
+    }},
+      h("label",{},"Iuran per minggu (Rp)"),amt,
+      h("label",{},"Nama 36 siswa — satu nama per baris, urut absen. Jangan ubah urutan agar riwayat tetap cocok."),ta,err,
+      h("div",{class:"grid2"},h("button",{class:"btn ghost",type:"button",onclick:()=>dlg.close()},"Batal"),h("button",{class:"btn",type:"submit"},"Simpan"))));
+  dlg.addEventListener("close",()=>dlg.remove());
+  document.body.append(dlg); dlg.showModal();
+}
+
+/* ============ ADMIN PANEL (khusus pemilik) ============ */
+function roleSelect(val,onchange){
+  const sel = h("select",{class:"in",style:"flex:none;width:auto;padding:7px 8px","aria-label":"Peran",onchange:e=>onchange(e.target.value)},
+    ASSIGNABLE.map(r=>h("option",{value:r,textContent:`${ROLES[r].i} ${ROLES[r].l}`})));
+  sel.value = val; return sel;
+}
+function buildAdmin(box){
+  const user = h("input",{class:"in",placeholder:"Username baru",maxLength:20,autocapitalize:"none"});
+  const pass = h("input",{class:"in",placeholder:"Password (min. 6)",type:"text",autocomplete:"off"});
+  const roleSel = roleSelect("member",()=>{}); roleSel.style.width="100%";
+  const err = h("div",{class:"err"});
+  const create = h("button",{class:"btn",type:"submit"},"Buat akun");
+  const form = h("form",{class:"form",onsubmit:async e=>{
+    e.preventDefault();
+    const u = normUser(user.value), p = pass.value, m = checkCreds(u,p);
+    if (m){ err.textContent=m; return; }
+    create.disabled = true; err.textContent="";
+    try{ await S.be.createMember(u,p,roleSel.value); toast(`Akun @${u} dibuat (${ROLES[roleSel.value].l}). Berikan username & password ke temanmu.`); user.value=""; pass.value=""; }
+    catch(x){ err.textContent=x.message; }
+    create.disabled = false;
+  }},h("div",{class:"grid2"},user,pass),h("label",{},"Peran"),roleSel,err,create,
+    h("div",{class:"hint"},"Akun langsung aktif (tanpa persetujuan). Teman bisa mengganti passwordnya sendiri lewat tombol 🔑."));
+  const pend = h("div"), mem = h("div");
+  box.replaceChildren(pend,h("div",{class:"glass sec"},h("h3",{},"Buat akun untuk teman"),form),mem);
+  S.adminEls = {pend,mem};
+}
+function renderAdmin(){
+  const box = $("#v-admin"); if (!box) return;
+  if (!S.adminEls || !box.contains(S.adminEls.pend)) buildAdmin(box);
+  const pending = S.members.filter(m=>m.status==="pending");
+  const others = S.members.filter(m=>m.status!=="pending");
+  const act = (fn,ok)=>async()=>{ try{ await fn(); ok&&toast(ok); }catch(x){ toast(x.message); } };
+  S.adminEls.pend.replaceChildren(
+    h("div",{class:"glass sec"},h("h3",{},"Permintaan akses ",pending.length?h("span",{class:"dot"},pending.length):null),
+      pending.length ? pending.map(m=>h("div",{class:"row"},h("span",{class:"nm"},"@",m.username),
+        h("button",{class:"btn sm",onclick:act(()=>S.be.setStatus(m.uid,"approved"),`@${m.username} disetujui`)},"Setujui"),
+        h("button",{class:"btn sm bad",onclick:act(()=>S.be.setStatus(m.uid,"blocked"),`@${m.username} ditolak`)},"Tolak")))
+        : h("div",{class:"empty"},"Tidak ada permintaan baru.")));
+  S.adminEls.mem.replaceChildren(
+    h("div",{class:"glass sec"},h("h3",{},`Semua anggota (${others.length})`),
+      h("div",{class:"hint",style:"margin-bottom:6px"},"Hanya kamu (Azka) yang bisa mengubah peran. 📝 Sekretaris: kelola tugas · 💰 Bendahara: kelola uang kas · ⭐ Ketua Kelas: tugas + kas (tanpa Admin Panel)."),
+      others.length ? others.map(m=>h("div",{class:"row"},
+        h("span",{class:"nm"},m.role==="owner"?"👑 ":"","@",m.username),
+        m.role==="owner" ? h("span",{class:"st approved"},"pemilik") : [
+          roleSelect(m.role,r=>act(()=>S.be.setRole(m.uid,r),`Peran @${m.username}: ${ROLES[r].l}`)()),
+          h("span",{class:"st "+m.status},m.status==="approved"?"aktif":"diblokir"),
+          m.status==="approved"
+            ? h("button",{class:"btn sm bad",onclick:act(()=>S.be.setStatus(m.uid,"blocked"),`@${m.username} diblokir`)},"Blokir")
+            : h("button",{class:"btn sm",onclick:act(()=>S.be.setStatus(m.uid,"approved"),`@${m.username} diaktifkan`)},"Aktifkan")]))
+        : h("div",{class:"empty"},"Belum ada anggota.")));
+}
+
+/* ============ GANTI PASSWORD ============ */
+function pwDialog(){
+  const old = h("input",{class:"in",type:"password",placeholder:"Password lama",autocomplete:"current-password"});
+  const nw = h("input",{class:"in",type:"password",placeholder:"Password baru (min. 6)",autocomplete:"new-password"});
+  const err = h("div",{class:"err"});
+  const dlg = h("dialog",{},h("h3",{},"Ganti password"),
+    h("form",{class:"form",method:"dialog",onsubmit:async e=>{
+      e.preventDefault();
+      if (nw.value.length<6){ err.textContent="Password baru minimal 6 karakter."; return; }
+      try{ await S.be.changePassword(old.value,nw.value); dlg.close(); toast("Password diganti."); }
+      catch(x){ err.textContent=x.message; }
+    }},old,nw,err,
+      h("div",{class:"grid2"},h("button",{class:"btn ghost",type:"button",onclick:()=>dlg.close()},"Batal"),h("button",{class:"btn",type:"submit"},"Simpan"))));
+  dlg.addEventListener("close",()=>dlg.remove());
+  document.body.append(dlg); dlg.showModal();
+}
+
+/* ============ SESI ============ */
+function stopSubs(){ S.subs.splice(0).forEach(f=>{ try{f();}catch{} }); }
+function onProfile(p){
+  const sig = JSON.stringify(p&&[p.uid,p.username,p.role,p.status]);
+  if (S.booted && sig===S.sig) return;
+  S.booted = true; S.sig = sig;
+  const prev = S.me;
+  stopSubs(); S.me = p; S.tab = "jadwal"; S.notes={}; S.msgs=[]; S.members=[];
+  S.alerts=[]; S.knownNotes=null; S.seen=null; S.kas={config:null,pays:{},exps:[]}; S.kasEls=null; S.adminEls=null;
+  S.kasFilter="all"; S.kasWeek=null; S.drafts={};
+  if (!p) return renderAuth();
+  if (p.status==="approved"){
+    startApp();
+    if (prev && prev.uid===p.uid && prev.role!==p.role) toast(`Perananmu sekarang: ${ROLES[p.role]?.l||p.role}`);
+  } else renderGate(p);
+}
+try{ navigator.serviceWorker?.register("sw.js").catch(()=>{}); }catch{}
+(async function boot(){
+  const cfg = window.XA_FIREBASE;
+  try{
+    S.be = (cfg && cfg.apiKey && cfg.projectId) ? await makeFirebase(cfg) : makeLocal();
+  }catch(e){
+    console.error(e); S.be = makeLocal();
+    toast("Firebase gagal dimuat — memakai mode demo lokal.");
+  }
+  S.be.watchSession(onProfile);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+
+    // Pemilik web = akun dengan username "azka"
+    function isOwner() {
+      return signedIn() && request.auth.token.email == 'azka@xa-avengers.example.com';
+    }
+    function hasProfile() {
+      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+    function me() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    function approved() { return isOwner() || (hasProfile() && me().status == 'approved'); }
+    function hasRole(roles) { return isOwner() || (approved() && me().role in roles); }
+
+    function canTasks() { return hasRole(['ketua', 'sekretaris']); }
+    function canKas()   { return hasRole(['ketua', 'bendahara']); }
+
+    function validText(max) {
+      return request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= max;
+    }
+
+    // Profil & peran: HANYA azka yang boleh mengubah peran/status.
+    match /users/{id} {
+      allow get: if signedIn() && (request.auth.uid == id || isOwner());
+      allow list: if isOwner();
+      allow create: if isOwner() || (signedIn() && request.auth.uid == id
+        && request.resource.data.keys().hasOnly(['username', 'role', 'status', 'createdAt'])
+        && request.resource.data.username == request.auth.token.email.split('@')[0]
+        && request.resource.data.role == 'member'
+        && request.resource.data.status == 'pending');
+      allow update, delete: if isOwner();
+    }
+
+    // Tugas: dilihat semua anggota; ditambah/diedit/dihapus azka, ketua, sekretaris.
+    match /notes/{id} {
+      allow read: if approved();
+      allow create: if canTasks() && validText(500)
+        && request.resource.data.keys().hasOnly(['key', 'text', 'by', 'uid', 'ts'])
+        && request.resource.data.uid == request.auth.uid;
+      allow update: if canTasks() && validText(500)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'editedBy', 'editedAt']);
+      allow delete: if canTasks();
+    }
+
+    // Chat: semua anggota; hapus pesan sendiri, atau azka/ketua menghapus pesan siapa pun.
+    match /messages/{id} {
+      allow read: if approved();
+      allow create: if approved() && validText(500)
+        && request.resource.data.uid == request.auth.uid;
+      allow delete: if approved() && (resource.data.uid == request.auth.uid || hasRole(['ketua']));
+    }
+
+    // Uang kas: hanya azka, ketua, bendahara.
+    match /kas/config {
+      allow read: if canKas();
+      allow create, update: if canKas()
+        && request.resource.data.names is list
+        && request.resource.data.names.size() == 36
+        && request.resource.data.amount is number
+        && request.resource.data.amount >= 0
+        && request.resource.data.amount <= 1000000;
+    }
+    match /kasPayments/{id} {
+      allow read, delete: if canKas();
+      allow create, update: if canKas()
+        && request.resource.data.sid is int
+        && request.resource.data.sid >= 0 && request.resource.data.sid < 36
+        && request.resource.data.week is string && request.resource.data.week.size() == 10
+        && request.resource.data.amount is number && request.resource.data.amount > 0;
+    }
+    match /kasExpenses/{id} {
+      allow read, delete: if canKas();
+      allow create: if canKas() && validText(100)
+        && request.resource.data.amount is number && request.resource.data.amount > 0;
+    }
+  }
+}
